@@ -34,7 +34,7 @@ const Navbar = () => {
           <li><Link className="hover:!text-[#800000] hover:!no-underline" to="/">HOME</Link></li>
           <li><Link className="hover:!text-[#800000] hover:!no-underline" to="/about">ABOUT</Link></li>
           <li><Link  className="hover:!text-[#800000] hover:!no-underline" to="/services">SERVICES</Link></li>
-          <li><a  className="hover:!text-[#800000] hover:!no-underline">PRODUCTS</a></li>
+          <li><Link  className="hover:!text-[#800000] hover:!no-underline" to="/products">PRODUCTS</Link></li>
           <li><a  className="hover:!text-[#800000] hover:!no-underline">CONTACT US</a></li>
           <li><a  className="hover:!text-[#800000] hover:!no-underline">QUOTE</a></li>
           <li><a  className="hover:!text-[#800000] hover:!no-underline">LOGIN</a></li>
@@ -59,8 +59,8 @@ const Navbar = () => {
           <div className="flex flex-col items-center">
            <Link className="hover:!text-[#800000] hover:!no-underline py-2" to="/">HOME</Link>
            <Link className="hover:!text-[#800000] hover:!no-underline py-2" to="/about">ABOUT</Link>
-            <a  className="hover:!text-[#800000] hover:!no-underline py-2">SERVICES</a>
-            <a  className="hover:!text-[#800000] hover:!no-underline py-2">PRODUCTS</a>
+           <Link  className="hover:!text-[#800000] hover:!no-underline py-2" to="/services">SERVICES</Link>
+            <a  className="hover:!text-[#800000] hover:!no-underline py-2" to="/products">PRODUCTS</a>
             <a  className="hover:!text-[#800000] hover:!no-underline py-2">CONTACT US</a>
             <a  className="hover:!text-[#800000] hover:!no-underline py-2">QUOTE</a>
             <a  className="hover:!text-[#800000] hover:!no-underline py-2">LOGIN</a>
