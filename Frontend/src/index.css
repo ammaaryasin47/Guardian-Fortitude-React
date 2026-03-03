@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Quantico:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    @apply font-barlow;
+  }
+  
+.login-btn {
+  transition: background-color 0.6s ease;
+  background-color: #000;
+}
+
+/* Base SVG lines */
+.login-btn svg {
+  fill: none;
+  stroke-width: 2;
+}
+
+/* Static border */
+.bg-line {
+  stroke: #ffffff;
+  opacity: 0.3;
+}
+
+/* Animated highlight line */
+.hl-line {
+  stroke: #ffffff;
+  stroke-dasharray: 520;
+  stroke-dashoffset: 520;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+/* ON HOVER OR FOCUS */
+.login-btn:hover .hl-line,
+.login-btn:focus .hl-line {
+  stroke-dashoffset: 0;
+}
+
+/* Background color animation */
+.login-btn:hover,
+.login-btn:focus {
+  background-color: #5b0f1b; /* maroon */
+}
+
+/* Remove default focus styles */
+.login-btn:focus {
+  outline: none;
+}
+
