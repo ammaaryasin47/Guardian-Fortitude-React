@@ -17,6 +17,7 @@ import GuidesBooks from "./products/guides&books.jsx";
 import Accessories from "./products/accessories.jsx";
 import UnmannedVehicals from "./products/unmannedvehicles.jsx";
 import AdminPanel from "./admin/adminpanel.jsx";
+import Profile from "./profile.jsx";
 
 
 const App = () => {
@@ -38,6 +39,7 @@ const App = () => {
       <Route path="/products/accessories" element={<Accessories />} />
       <Route path="/products/unmannedvehicals" element={<UnmannedVehicals />} />
       <Route path="/admin/adminpanel" element={<AdminPanel />} />
+      <Route path="/profile" element={<Profile />} />
 
     </Routes>
   );

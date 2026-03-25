@@ -1,0 +1,15 @@
+{
+  "name": "guardian-fortitude-mern",
+  "version": "1.0.0",
+  "description": "Root Manager for MERN project",
+  "private": true,
+  "scripts": {
+    "server": "npm start --prefix backend",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "install-all": "npm install && npm install --prefix backend && npm install --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

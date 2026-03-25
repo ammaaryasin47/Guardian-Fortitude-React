@@ -1,212 +1,184 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import QuoteBanner from "../assets/IMAGES/QUOTE/quote-banner.jpg";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import emailjs from "@emailjs/browser";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Container, Row, Col } from "react-bootstrap";
 
 const Quote = () => {
   const [name, setName] = useState("");
-return (
-    <div className="bg-black">
+  const [address, setAddress] = useState("");
+  const [service, setService] = useState("Cyber Security");
+  const [contact, setContact] = useState("");
+  const [email, setEmail] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
+  // --- UPDATED STYLE: rounded-lg for rounded edges, border-[#800000] for Maroon ---
+  const inputClass = "bg-black text-white border border-zinc-800 rounded-lg shadow-none px-3 py-2 text-sm tracking-widest transition-all duration-300 placeholder:text-zinc-600 focus:bg-black focus:text-white focus:!border-[#800000] focus:ring-2 focus:ring-[#800000]/20 outline-none";
+
+  const handleTransmit = (e) => {
+    e.preventDefault();
+    setIsSending(true);
+
+    const serviceDescriptions = {
+      "Cyber Security": "Our Cyber Security suite provides advanced threat detection, penetration testing, and 24/7 network monitoring to shield your digital assets.",
+      "Armed Guards": "Our elite Armed Guard units are comprised of highly trained professionals authorized to provide high-level deterrents and rapid response.",
+      "Unarmed Guards": "Professional Unarmed Guard services focus on vigilance, access control, and maintaining a secure presence at your premises.",
+      "Event Security": "From crowd control to VIP management, our Event Security teams ensure your gathering proceeds without interruption.",
+      "Executive Protection": "Discreet and professional, our Executive Protection details are specialized in risk mitigation for high-profile individuals."
+    };
+
+    const templateParams = {
+      to_name: name,               
+      user_email: email,              
+      service: service,               
+      service_paragraph: serviceDescriptions[service] || "Specialized security solutions.", 
+      user_contact: contact,          
+      user_address: address           
+    };
+
+    emailjs
+      .send(
+        "service_s65l3by", 
+        "template_vmhcyvr",   
+        templateParams,
+        "mPtxfekfXl_jZzpZy"       
+      )
+      .then(() => {
+        alert(`TRANSMISSION SUCCESSFUL. Check ${email} for your quote.`);
+        setIsSending(false);
+        setName(""); setAddress(""); setContact(""); setEmail("");
+      })
+      .catch((err) => {
+        console.error("EMAILJS_CRITICAL_ERROR:", err);
+        alert("TRANSMISSION FAILED. CHECK CONSOLE LOGS.");
+        setIsSending(false);
+      });
+  };
+
+  return (
+    <div className="bg-black min-h-screen font-[Quantico]">
       <Navbar />
 
-      <div className="text-white relative h-[15vh] sm:h-[25vh] md:h-[35vh] lg:h-[45vh] my-5 overflow-hidden px-5">
-        <div
-          className="absolute inset-0 bg-center bg-cover opacity-75"
-          style={{ backgroundImage: `url(${QuoteBanner})` }}
-        ></div>
-        <div className="relative h-full flex items-center justify-center text-3xl text-white">
-          QUOTE
+      <div className="pt-20"> 
+        <div className="relative h-[25vh] md:h-[35vh] overflow-hidden">
+          <div
+            className="absolute inset-0 bg-center bg-cover"
+            style={{ backgroundImage: `url(${QuoteBanner})`, filter: "brightness(0.4)" }}
+          ></div>
+          <div className="relative h-full flex items-center justify-center">
+            <h1 className="text-white text-3xl md:text-5xl font-light tracking-[0.3em] uppercase">
+              Quotation
+            </h1>
+          </div>
         </div>
       </div>
-      
-      <Container fluid className="mt-5 pt-5 text-light">
-      <Row className="justify-content-start">
-        <Col
-          xs={12}
-          md={10}
-          lg={8}
-          className="
-            ml-4 md:ml-12 lg:ml-24
-            px-3 md:px-4 lg:px-5
-            max-w-full md:max-w-4xl lg:max-w-3xl
-            leading-relaxed md:leading-loose
-            tracking-normal md:tracking-wide lg:tracking-widest
-          "
-        >
-          <h2 className="text-white text-lg md:text-xl tracking-widest mb-3">
-            This Is A Complimentary Quotation From
-          </h2>
 
-          <h1 className="text-xl md:text-2xl font-bold tracking-[0.25em] mb-8">
-            GUARDIAN FORTITUDE
-          </h1>
+      <Container className="py-12 md:py-20">
+        <Row className="justify-content-center">
+          <Col lg={8} className="px-4">
+            <Form className="text-white" onSubmit={handleTransmit}>
+              <p className="mb-5 text-lg tracking-wide">
+                To the Management at <strong className="text-white">Guardian Fortitude Security Services</strong>,
+              </p>
 
-          <p className="quote-para mb-5">
-            To The Management At&nbsp;
-            <strong className="tracking-widest">
-              GUARDIAN FORTITUDE SECURITY SERVICES
-            </strong>,
-          </p>
+              {/* NAME */}
+              <Row className="mb-4 items-center">
+                <Col xs="auto"><span className="text-lg">My name is</span></Col>
+                <Col xs={12} sm={5} md={4}>
+                  <Form.Control
+                    type="text" placeholder="NAME" required
+                    value={name} onChange={(e) => setName(e.target.value)}
+                    className={inputClass}
+                  />
+                </Col>
+              </Row>
 
-          <p className="quote-para mb-5">
-            My Name Is{" "}
-            <input
-              type="text"
-              placeholder="NAME"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="
-                bg-transparent border-b border-light text-white
-                outline-none mx-2
-                w-full sm:w-64
-                tracking-wide
-              "
-              required
-            />
-          </p>
+              {/* ADDRESS */}
+              <Row className="mb-4 items-center">
+                <Col xs="auto"><span className="text-lg">Residing at</span></Col>
+                <Col xs={12} sm={8} md={6}>
+                  <Form.Control
+                    type="text" placeholder="ADDRESS" required
+                    value={address} onChange={(e) => setAddress(e.target.value)}
+                    className={inputClass}
+                  />
+                </Col>
+              </Row>
 
-          <p className="quote-para mb-5">
-            Residing At{" "}
-            <input
-              type="text"
-              placeholder="ADDRESS"
-              className="
-                bg-transparent border-b border-light text-white
-                outline-none mx-2
-                w-full sm:w-96
-                tracking-wide
-              "
-              required
-            />
-          </p>
+              <p className="mb-4 text-lg">I am reaching out to inquire about your security services.</p>
 
-          <p className="quote-para mb-5">
-            I Am Reaching Out To Inquire About Your Security Services.
-          </p>
+              {/* SERVICE SELECT */}
+              <Row className="mb-4 items-center">
+                <Col xs="auto"><span className="text-lg">I would like to know more about</span></Col>
+                <Col xs={12} sm={6} md={4}>
+                  <Form.Select 
+                    value={service} onChange={(e) => setService(e.target.value)}
+                    className={inputClass}
+                  >
+                    <option value="Cyber Security" className="bg-black">Cyber Security</option>
+                    <option value="Armed Guards" className="bg-black">Armed Guards</option>
+                    <option value="Unarmed Guards" className="bg-black">Unarmed Guards</option>
+                    <option value="Event Security" className="bg-black">Event Security</option>
+                    <option value="Executive Protection" className="bg-black">Executive Protection</option>
+                  </Form.Select>
+                </Col>
+              </Row>
 
-          <p className="quote-para mb-5">
-            I Would Like To Know More About{" "}
-            <select
-              className="
-                bg-transparent border border-light bg-dark text-white
-                px-3 py-1 mt-2 sm:mt-0
-                w-full sm:w-auto
-                tracking-wide outline-none
-              " required
-            >
-               <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  Cyber Security
-                </option>
-                <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  Armed Guards
-                </option>
-                <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  Unarmed Guards
-                </option>
-                <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  Event Security
-                </option>
-                <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  Surveillance & Monitoring
-                </option>
-                <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  Executive Protection
-                </option>
-                <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  Detective Services
-                </option>
-                <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  Consultation Services
-                </option>
-                <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  Vehicle Convoy Service
-                </option>
-                <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  Special Assault Team
-                </option>
-                <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  Extraction
-                </option>
-                <option style={{ backgroundColor: "#212529", color: "#fff" }}>
-                  K9 Unit
-                </option>
-            </select>
-          </p>
+              {/* CONTACT */}
+              <Row className="mb-4 items-center">
+                <Col xs="auto"><span className="text-lg">You can reach me at</span></Col>
+                <Col xs={12} sm={5} md={3}>
+                  <Form.Control
+                    type="text" placeholder="CONTACT NO." required
+                    value={contact} onChange={(e) => setContact(e.target.value)}
+                    className={inputClass}
+                  />
+                </Col>
+              </Row>
 
-          <p className="quote-para mb-5">
-            You Can Reach Me At{" "}
-            <input
-              type="text"
-              placeholder="CONTACT NO."
-              className="
-                bg-transparent border-b border-light text-white
-                outline-none mx-2
-                w-full sm:w-64
-                tracking-wide
-              "
-              required
-            />
-          </p>
+              {/* EMAIL */}
+              <Row className="mb-5 items-center">
+                <Col xs="auto"><span className="text-lg">Or via email at</span></Col>
+                <Col xs={12} sm={6} md={4}>
+                  <Form.Control
+                    type="email" placeholder="EMAIl" required
+                    value={email} onChange={(e) => setEmail(e.target.value)}
+                    className={inputClass}
+                  />
+                </Col>
+              </Row>
 
-          <p className="quote-para mb-8">
-            Or Via Email At{" "}
-            <input
-              type="email"
-              placeholder="EMAIL"
-              className="
-                bg-transparent border-b border-light text-white
-                outline-none mx-2
-                w-full sm:w-72
-                tracking-wide
-              "
-              required
-            />
-          </p>
+              <div className="mb-5 pt-4">
+                <p className="text-zinc-500 mb-1 text-sm tracking-widest">Sincerely,</p>
+                <p className="h5 border-b border-zinc-800 d-inline-block min-w-[200px] pb-1 uppercase tracking-tighter">
+                  {name || "____________________"}
+                </p>
+              </div>
 
-          <p className="quote-para mb-5 tracking-widest">Sincerely,</p>
+              <Form.Group className="mb-5">
+                <Form.Check
+                  type="checkbox" id="terms" required
+                  label={<span className="text-zinc-500 text-xs tracking-widest ml-2">I AGREE TO THE TERMS & CONDITIONS</span>}
+                  className="d-flex align-items-center"
+                />
+              </Form.Group>
 
-          <p className="quote-para mb-8">
-            <input
-              type="text"
-              placeholder="NAME"
-              value={name}
-              className="
-                bg-transparent border-b border-light text-white
-                outline-none
-                w-full sm:w-64
-                tracking-wide
-              "
-              disabled
-              readOnly
-            />
-          </p>
+              <Button 
+                variant="outline-light" type="submit" disabled={isSending}
+                className="rounded-lg px-5 py-3 text-uppercase tracking-[0.3em] font-bold text-xs hover:bg-[#800000] hover:border-[#800000] transition-all border-zinc-700"
+              >
+                {isSending ? "Transmitting..." : "Submit Request"}
+              </Button>
+            </Form>
+          </Col>
+        </Row>
+      </Container>
 
-          <p className="quote-para mb-6 text-sm tracking-wide">
-            <input type="checkbox" required className="mr-2" />
-            I Hereby Agree To All The{" "}
-            <a href="#" className="underline tracking-widest">
-              Terms & Conditions
-            </a>
-          </p>
-
-          <a
-            href="#"
-            className="inline-block text-white text-xl tracking-widest"
-          >
-            <i className="bx bx-send"></i>
-          </a>
-        </Col>
-      </Row>
-    </Container>
-
-
-            <Footer />
+      <Footer />
     </div>
-    );
+  );
 };
-      
+
 export default Quote;

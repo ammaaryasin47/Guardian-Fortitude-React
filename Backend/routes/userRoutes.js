@@ -2,81 +2,90 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const { protect } = require('../middleware/authmiddleware');
 
-// --- REGISTRATION ROUTE ---
+// --- 1. REGISTRATION ---
 router.post('/register', async (req, res) => {
   try {
-    // Destructure all fields from the frontend
-    const { 
-      name, contact, email, password, preferredLanguage, 
-      chainOfCommand, acknowledgeTerms, sector, nature, 
-      armsLicense, role, address 
-    } = req.body;
-
-    const newUser = new User({
-      name, contact, email, password, preferredLanguage,
-      chainOfCommand, acknowledgeTerms, sector, nature,
-      armsLicense, role, address
-    });
-
+    const newUser = new User(req.body);
     await newUser.save();
     res.status(201).json({ success: true, message: "User Registered Successfully!" });
   } catch (err) {
-    console.error("Registration Error:", err);
     res.status(400).json({ success: false, error: err.message });
   }
 });
 
+// --- 2. LOGIN ---
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Authorized Access Request for:", email);
-
-    // 1. Find user and validate existence
     const user = await User.findOne({ email: email.toLowerCase().trim() });
 
-    if (!user) {
-      console.log("Access Denied: Identifier not found.");
-      return res.status(401).json({ error: "Invalid Credentials" });
-    }
+    if (user && (await user.matchPassword(password))) {
+      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
-    // 2. Compare Hashed Password
-    const isMatch = await user.matchPassword(password);
-    console.log("Credential Verification:", isMatch ? "SUCCESS" : "FAILED");
-
-    if (isMatch) {
-      // 3. Generate JWT Token (Uses your secret from .env)
-      const token = jwt.sign(
-        { id: user._id, role: user.role }, 
-        process.env.JWT_SECRET, 
-        { expiresIn: '24h' }
-      );
-
-      // 4. Set HttpOnly Cookie
       res.cookie('token', token, {
-      httpOnly: true,
-      secure: false, // Must be FALSE while testing on localhost (HTTP)
-      sameSite: 'lax',
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
-      // 5. Respond to Frontend (Send user info, but NO token in JSON)
-      res.json({
-        success: true,
-        message: "Authorized Access.",
-        user: {
-          id: user._id,
-          name: user.name,
-          role: user.role,
-          email: user.email
-        }
+        httpOnly: true,
+        secure: false, // Set to true in production with HTTPS
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000,
       });
+
+      res.json({ success: true, user: { id: user._id, name: user.name, role: user.role, email: user.email } });
     } else {
       res.status(401).json({ error: "Invalid Credentials" });
     }
   } catch (err) {
-    console.error("Critical System Error:", err);
     res.status(500).json({ error: "Server Error" });
+  }
+});
+
+// --- 3. GET PROFILE ---
+router.get('/profile', protect, async (req, res) => {
+  console.log(`🛡️  INCOMING_REQUEST: Fetching profile for UID: ${req.user._id}`);
+  
+  const user = await User.findById(req.user._id);
+  if (user) {
+    // FORCE NO-CACHE to prevent the 304 blank input issue
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.json(user);
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+});
+
+// --- 4. UPDATE PROFILE ---
+router.put('/profile', protect, async (req, res) => {
+  console.log("🛠️  UPDATE_INITIATED:", req.body);
+
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    // Verify Current Password
+    const isMatch = await user.matchPassword(req.body.prevPassword);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'INVALID_VERIFICATION_KEY' });
+    }
+
+    // Explicit field mapping
+    const fields = ['name', 'email', 'contact', 'sector', 'nature', 'address', 'armsLicense', 'preferredLanguage', 'chainOfCommand'];
+    fields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        user[field] = req.body[field];
+      }
+    });
+
+    if (req.body.newPassword) {
+      user.password = req.body.newPassword;
+    }
+
+    const updatedUser = await user.save();
+    console.log("✅ UPDATE_SUCCESSFUL:", updatedUser.name);
+    
+    // Return the updated doc
+    res.status(201).json(updatedUser);
+  } else {
+    res.status(404).json({ message: 'User not found' });
   }
 });
 
