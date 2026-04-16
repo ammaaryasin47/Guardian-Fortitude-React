@@ -9,5 +9,4 @@ const productSchema = new mongoose.Schema({
   specs: { type: Object, default: {} } 
 }, { timestamps: true });
 
-// This line is what allows .deleteMany() to work:
-module.exports = mongoose.model('Product', productSchema);
+module.exports = mongoose.models.Product || mongoose.model('Product', productSchema);

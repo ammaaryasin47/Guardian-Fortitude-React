@@ -3,10 +3,10 @@ import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ShoppingCart, Maximize2, X, Trash2, ShieldCheck } from 'lucide-react';
+import { useCart } from "../../context/CartContext"; // Correct context path
 
 const ProtectiveGears = () => {
-  const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { cart, addToCart, setIsCartOpen } = useCart();
   const ProductsBanner = 'https://armour-works.com/images/banner.jpg';
 
   // --- DATA SECTIONS ---
@@ -43,8 +43,6 @@ const ProtectiveGears = () => {
     { id: "Armor-Shld-Backpack", title: "Ballistic Backpack", price: "$20,000", img: "https://www.mku.com/image/cache/catalog/SHIELDS/SOFT%20SHIELD/MULTI%20PURPOSE%20SHIELD_SPS-FD-1A/MULTI%20PURPOSE%20SHIELD_SPS-FD-1A%20(4)-228x228.png" }
   ];
 
-  const addToCart = (product) => setCart((prev) => [...prev, product]);
-  const removeFromCart = (index) => setCart(cart.filter((_, i) => i !== index));
 
   const GearSection = ({ title, products }) => (
     <section className="py-20 px-4 border-b border-white/5">
@@ -115,58 +113,7 @@ const ProtectiveGears = () => {
       <GearSection title="PLATES & CARRIERS" products={plateCarriers} />
       <GearSection title="BALLISTIC SHIELDS" products={shields} />
 
-      {/* Cart Sidebar */}
-      {isCartOpen && (
-        <div className="fixed inset-0 z-[100] flex justify-end bg-black/70 backdrop-blur-md transition-all">
-          <div className="absolute inset-0" onClick={() => setIsCartOpen(false)} />
-          <div className="relative w-full max-w-md bg-[#050505] h-full border-l border-[#800000]/40 flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.8)]">
-            <div className="p-8 border-b border-white/5 bg-[#0a0a0a] flex justify-between items-center relative">
-              <div className="absolute top-0 left-0 w-1 h-full bg-[#800000]" />
-              <div>
-                <h3 className="text-xl font-black tracking-tighter flex items-center gap-2"><ShieldCheck className="text-[#800000]" /> DEPLOYMENT LIST</h3>
-                <p className="text-[9px] text-gray-500 tracking-[0.2em] mt-1 uppercase">Ready for Authorization</p>
-              </div>
-              <X className="cursor-pointer hover:rotate-90 transition-transform text-gray-400 hover:text-white" onClick={() => setIsCartOpen(false)} />
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              {cart.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center opacity-10 italic">
-                  <ShoppingCart size={64} className="mb-4" />
-                  <p className="tracking-widest">EMPTY ASSET LOG</p>
-                </div>
-              ) : (
-                cart.map((item, index) => (
-                  <div key={index} className="flex gap-4 bg-[#0f0f0f] p-4 rounded-sm border border-white/5 border-r-[#800000] border-r-4 hover:bg-[#141414] transition-all">
-                    <img src={item.img} className="w-16 h-16 object-contain rounded-sm border border-white/10" alt="" />
-                    <div className="flex-1">
-                      <p className="text-[9px] text-[#800000] font-bold tracking-widest uppercase mb-1">UNIT_{item.id.split('-').pop()}</p>
-                      <p className="text-[11px] font-bold text-white uppercase leading-tight mb-2">{item.title}</p>
-                      <p className="text-xs font-black text-white/60">{item.price}</p>
-                    </div>
-                    <button onClick={() => removeFromCart(index)} className="text-gray-600 hover:text-red-500 transition-colors self-center"><Trash2 size={16} /></button>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {cart.length > 0 && (
-              <div className="p-8 bg-[#0a0a0a] border-t border-white/5">
-                <div className="flex justify-between items-end mb-6 font-sans">
-                  <p className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Est. Operational Cost</p>
-                  <p className="text-2xl font-black text-[#800000] tracking-tighter">
-                    ${cart.reduce((total, item) => total + parseInt(item.price.replace(/[^0-9]/g, '')), 0).toLocaleString()}
-                  </p>
-                </div>
-                <button className="w-full bg-[#800000] text-white py-4 font-black tracking-[0.2em] text-xs hover:bg-[#a00000] transition-all border border-[#800000] active:scale-[0.98] uppercase">
-                  INITIALIZE QUOTE PROTOCOL
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
+      
       <Footer />
     </div>
   );

@@ -5,11 +5,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ParallaxImg from '../../assets/IMAGES/PRODUCTS/ARMOURY/Parallax.jpg';
 import { Container, Row, Col, Card, Button, Badge, Stack } from 'react-bootstrap';
 import { ShoppingCart, X, Trash2, ShieldCheck, Target } from 'lucide-react';
+import { useCart } from "../../context/CartContext";
 
 const Armoury = () => {
-  const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { cart, addToCart, setIsCartOpen } = useCart();
   const [activeTab, setActiveTab] = useState("series");
+  
 
   const categoryMap = {
     PISTOLS: "Pistols",
@@ -21,7 +22,7 @@ const Armoury = () => {
     LAUNCHERS: "Launchers",
     MACHINE_GUNS: "Machine Guns",
     GRENADES_IED: "Explosives & IED",
-    KNIVES: "Blades & Knives"
+    KNIVES: "Knives"
   };
 
  const caliberData = [
@@ -81,7 +82,7 @@ const Armoury = () => {
     { title: "SNIPER RIFLES", img: "https://cdnb.artstation.com/p/assets/images/images/032/325/659/large/laurentiu-nedelca-pms-akrapov-s4-artstation-010.jpg?1606131873" },
     { title: "LAUNCHERS", img: "https://cdna.artstation.com/p/assets/images/images/043/750/398/large/james-shock-2-edited.jpg?1638179700" },
     { title: "MACHINE GUNS", img: "https://cdnb.artstation.com/p/assets/images/images/035/824/167/large/laurentiu-nedelca-pms-stal-51-0011.jpg?1615993846" },
-    { title: "GRENADES & IED", img: "https://images2.alphacoders.com/108/1085880.jpg" },
+    { title: "GRENADES_IED", img: "https://images2.alphacoders.com/108/1085880.jpg" },
     { title: "KNIVES", img: "https://cdna.artstation.com/p/assets/images/images/051/947/416/large/jason-h-ka-bar-second.jpg?1658571531" }
   ];
 
@@ -171,9 +172,9 @@ const inventory = [
   { id: 'GATLING', name: 'GATLING GUN', price: 22495, capacity: '1000 Rounds', weight: '27.2 kg', action: 'Rotary', caliber: '7.62mm', img: 'https://cdna.artstation.com/p/assets/images/images/031/404/822/large/akash-bhatt-gatling-close.jpg?1603523410', flip: true, category: 'MACHINE_GUNS' },
 
   // --- GRENADES & IED ---
-  { id: 'FLASHBANG', name: 'M84 FLASHBANG', price: 22495, capacity: 'Single Use', weight: '0.23 kg', action: 'Pyrotechnic', caliber: 'Stun', img: 'https://cdna.artstation.com/p/assets/images/images/056/277/092/large/jason-h-m48-fourth-new.jpg?1668861580', flip: true, category: 'GRENADES_&_IED' },
-  { id: 'C4', name: 'C4 EXPLOSIVE', price: 22495, capacity: '1 Block', weight: '0.57 kg', action: 'Remote Det', caliber: 'Plastic', img: 'https://cdnb.artstation.com/p/assets/images/images/064/474/107/large/fan-cheng-tbrender-main-camera.jpg?1688002790', flip: false, category: 'GRENADES_&_IED' },
-  { id: 'M67', name: 'M67 FRAG', price: 22495, capacity: 'Single Use', weight: '0.4 kg', action: 'Timed Fuse', caliber: 'Fragmentation', img: 'https://cdnb.artstation.com/p/assets/images/images/035/152/499/large/vladislav-fjh-gavrilin-shot0.jpg?1614223264', flip: false, category: 'GRENADES_&_IED' },
+  { id: 'FLASHBANG', name: 'M84 FLASHBANG', price: 22495, capacity: 'Single Use', weight: '0.23 kg', action: 'Pyrotechnic', caliber: 'Stun', img: 'https://cdna.artstation.com/p/assets/images/images/056/277/092/large/jason-h-m48-fourth-new.jpg?1668861580', flip: true, category: 'GRENADES_IED' },
+  { id: 'C4', name: 'C4 EXPLOSIVE', price: 22495, capacity: '1 Block', weight: '0.57 kg', action: 'Remote Det', caliber: 'Plastic', img: 'https://cdnb.artstation.com/p/assets/images/images/064/474/107/large/fan-cheng-tbrender-main-camera.jpg?1688002790', flip: false, category: 'GRENADES_IED' },
+  { id: 'M67', name: 'M67 FRAG', price: 22495, capacity: 'Single Use', weight: '0.4 kg', action: 'Timed Fuse', caliber: 'Fragmentation', img: 'https://cdnb.artstation.com/p/assets/images/images/035/152/499/large/vladislav-fjh-gavrilin-shot0.jpg?1614223264', flip: false, category: 'GRENADES_IED' },
 
   // --- KNIVES ---
   { id: 'KUKRI', name: 'COMBAT KUKRI', price: 22495, capacity: 'N/A', weight: '0.6 kg', action: 'Fixed Blade', caliber: 'Steel', img: 'https://cdna.artstation.com/p/marketplace/presentation_assets/001/760/002/large/file.jpg?1654356909', flip: false, category: 'KNIVES' },
@@ -184,8 +185,7 @@ const inventory = [
 ];
 
 
-  const addToCart = (item) => setCart([...cart, item]);
-  const removeFromCart = (index) => setCart(cart.filter((_, i) => i !== index));
+
 
   const scrollToCategory = (id) => {
     const el = document.getElementById(id);
@@ -193,50 +193,33 @@ const inventory = [
   };
 
   return (
-    <div className="bg-black min-h-screen text-white font-[Quantico] pt-24 md:pt-32">
+    <div className="bg-black min-h-screen text-white font-[Quantico] pt-24 md:pt-32 relative overflow-x-hidden">
       <Navbar />
 
-    
-<div className="relative h-[25vh] md:h-[40vh] mb-10 overflow-hidden border-b border-[#800000]/30 shadow-[0_10px_30px_rgba(128,0,0,0.1)]">
-  
-  
-  <div 
-    className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-40 blur-[1px] scale-105 transition-transform duration-700 hover:scale-100" 
-    style={{ backgroundImage: `url('https://static.vecteezy.com/system/resources/thumbnails/049/495/071/small_2x/bullet-isolated-on-black-background-with-reflexion-rifle-bullets-close-up-on-black-back-cartridges-for-rifle-and-carbine-on-a-black-photo.jpg')` }} 
-  />
+      {/* --- HERO HUD BANNER --- */}
+      <div className="relative h-[25vh] md:h-[40vh] mb-10 overflow-hidden border-b border-[#800000]/30 shadow-[0_10px_30px_rgba(128,0,0,0.1)]">
+        <div 
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-40 blur-[1px] scale-105 transition-transform duration-700 hover:scale-100" 
+          style={{ backgroundImage: `url('https://static.vecteezy.com/system/resources/thumbnails/049/495/071/small_2x/bullet-isolated-on-black-background-with-reflexion-rifle-bullets-close-up-on-black-back-cartridges-for-rifle-and-carbine-on-a-black-photo.jpg')` }} 
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90" />
 
-  
-  <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-80" />
-  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90" />
+        <div className="relative h-full flex flex-col items-center justify-center text-center px-4 z-10">
+          <div className="w-16 h-[2px] bg-[#800000] mb-4 animate-pulse shadow-[0_0_10px_#800000]" />
+          <h1 className="text-4xl md:text-7xl font-black tracking-[0.4em] uppercase text-white drop-shadow-[0_0_20px_rgba(128,0,0,0.5)]">
+            ARM<span className="text-[#800000]">O</span>URY
+          </h1>
+          <div className="flex items-center gap-3 mt-4">
+            <span className="w-2 h-2 bg-[#800000] rounded-full animate-ping" />
+            <p className="text-[10px] tracking-[0.6em] text-gray-400 font-mono uppercase">
+              Ballistics_Inventory_v2.04
+            </p>
+          </div>
+        </div>
+      </div>
 
-  {/* Text Content */}
-  <div className="relative h-full flex flex-col items-center justify-center text-center px-4 z-10">
-    {/* Decorative HUD line */}
-    <div className="w-16 h-[2px] bg-[#800000] mb-4 animate-pulse shadow-[0_0_10px_#800000]" />
-    
-    <h1 className="text-4xl md:text-7xl font-black tracking-[0.4em] uppercase text-white drop-shadow-[0_0_20px_rgba(128,0,0,0.5)] font-[Quantico]">
-      ARM<span className="text-[#800000]">O</span>URY
-    </h1>
-
-    {/* Technical Subtitle / Data Point */}
-    <div className="flex items-center gap-3 mt-4">
-        <span className="w-2 h-2 bg-[#800000] rounded-full animate-ping" />
-        <p className="text-[10px] tracking-[0.6em] text-gray-400 font-mono uppercase">
-          Ballistics_Inventory_v2.04
-        </p>
-    </div>
-  </div>
-
-  {/* HUD Corner Accents */}
-  <div className="absolute top-4 left-4 w-6 h-6 border-l-2 border-t-2 border-[#800000]/40" />
-  <div className="absolute top-4 right-4 w-6 h-6 border-r-2 border-t-2 border-[#800000]/40" />
-  <div className="absolute bottom-4 left-4 w-8 h-[2px] bg-[#800000]/30" />
-  <div className="absolute bottom-4 right-4 w-8 h-[2px] bg-[#800000]/30" />
-  
-  {/* Scanline Effect (Optional - add to global CSS for extra grit) */}
-  <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_4px,3px_100%]" />
-</div>
-      {/* Tabs */}
+      {/* --- NAVIGATION TABS --- */}
       <div className="flex justify-center gap-8 py-12">
         {["series", "caliber"].map(tab => (
           <button 
@@ -249,7 +232,7 @@ const inventory = [
         ))}
       </div>
 
-      {/* Series Selection Grid */}
+      {/* --- CATEGORY SELECTION GRID --- */}
       {activeTab === "series" && (
         <Container className="mb-5">
           <Row className="g-4">
@@ -266,7 +249,7 @@ const inventory = [
                     <Card.Img src={item.img} className="w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-all duration-700" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
                     <div className="absolute inset-0 d-flex flex-column justify-content-end p-4">
-                      <h4 className="fw-black m-0 tracking-widest">{item.title}</h4>
+                      <h4 className="fw-black m-0 tracking-widest uppercase">{item.title}</h4>
                       <div className="w-0 group-hover:w-full h-[2px] bg-[#800000] transition-all duration-500" />
                     </div>
                   </div>
@@ -277,21 +260,21 @@ const inventory = [
         </Container>
       )}
 
-      {/* Caliber Selection */}
+      {/* --- CALIBER SELECTION --- */}
       {activeTab === "caliber" && (
         <div className="max-w-7xl mx-auto px-4 mb-20 flex justify-center gap-10 overflow-x-auto py-10">
           {caliberData.map((c, i) => (
-            <div key={i} className="flex flex-col items-center group cursor-pointer">
+            <div key={i} className="flex flex-col items-center group cursor-pointer min-w-[60px]">
               <svg viewBox={c.viewBox} className="w-12 h-40 text-[#333] group-hover:text-[#800000] transition-all">
                 <path fill="currentColor" d={c.path} />
               </svg>
-              <p className="mt-4 text-[10px] font-bold tracking-widest text-gray-500 group-hover:text-white">{c.label}</p>
+              <p className="mt-4 text-[10px] font-bold tracking-widest text-gray-500 group-hover:text-white uppercase">{c.label}</p>
             </div>
           ))}
         </div>
       )}
 
-      {/* Main Inventory Sections */}
+      {/* --- INVENTORY SECTIONS --- */}
       <Container className="pb-5">
         {Object.entries(categoryMap).map(([key, label]) => {
           const items = inventory.filter(i => i.category === key);
@@ -308,11 +291,10 @@ const inventory = [
                 {items.map((item) => (
                   <Col key={item.id} xl={3} lg={4} md={6}>
                     <Card className="bg-[#0a0a0a] border-secondary border-opacity-25 rounded-0 h-100 tactical-card position-relative overflow-hidden">
-                      {/* Tactical Accents */}
                       <div className="position-absolute top-0 end-0 p-2" style={{ zIndex: 10 }}>
-                         <Badge bg="transparent" className="border border-danger text-danger font-monospace px-2 py-1" style={{ fontSize: '0.6rem' }}>
-                            READY
-                         </Badge>
+                        <Badge bg="transparent" className="border border-danger text-danger font-monospace px-2 py-1" style={{ fontSize: '0.6rem' }}>
+                          READY
+                        </Badge>
                       </div>
 
                       <div className="p-4 text-center bg-black border-bottom border-secondary border-opacity-10">
@@ -330,7 +312,7 @@ const inventory = [
                       <Card.Body className="d-flex flex-column p-4">
                         <Stack direction="horizontal" className="justify-content-between align-items-start mb-3">
                           <div>
-                            <h6 className="m-0 fw-black text-white">{item.name}</h6>
+                            <h6 className="m-0 fw-black text-white uppercase">{item.name}</h6>
                             <small className="text-secondary font-monospace" style={{ fontSize: '0.6rem' }}>SN: {item.id}-TX</small>
                           </div>
                           <span className="text-danger fw-bold font-monospace">${item.price.toLocaleString()}</span>
@@ -350,9 +332,9 @@ const inventory = [
                         </div>
 
                         <Button 
-                          onClick={() => addToCart(item)}
+                          onClick={() => addToCart({ ...item, price: `$${item.price}` })}
                           variant="outline-light" 
-                          className="rounded-0 fw-bold border-2 btn-sm py-2 hover-red-glow"
+                          className="rounded-0 fw-bold border-2 btn-sm py-2 hover-red-glow uppercase"
                           style={{ letterSpacing: '2px', fontSize: '0.7rem' }}
                         >
                           INITIATE ORDER
@@ -367,53 +349,25 @@ const inventory = [
         })}
       </Container>
 
-      {/* Cart UI */}
-      <button onClick={() => setIsCartOpen(true)} className="fixed bottom-8 right-8 z-50 bg-[#800000] p-4 rounded-full shadow-lg">
-        <ShoppingCart size={24} />
-        {cart.length > 0 && <Badge bg="white" text="dark" className="position-absolute top-0 start-100 translate-middle rounded-circle">{cart.length}</Badge>}
+      {/* --- CART TRIGGER BUTTON (BOTTOM RIGHT) --- */}
+      <button 
+        onClick={() => setIsCartOpen(true)} 
+        className="fixed bottom-8 right-8 z-[60] bg-[#800000] p-4 rounded-full shadow-[0_0_20px_rgba(128,0,0,0.4)]  hover:scale-110 transition-transform active:scale-95"
+      >
+        <ShoppingCart size={24} className="text-white" />
+        {cart.length > 0 && (
+          <span className="absolute -top-1 -right-1 bg-white text-[#800000] text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
+            {cart.length}
+          </span>
+        )}
       </button>
 
-      {isCartOpen && (
-        <div className="fixed inset-0 z-[100] flex justify-end">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsCartOpen(false)} />
-          <div className="relative w-full max-w-md bg-[#050505] h-full border-l border-[#800000]/40 p-8">
-            <div className="flex justify-between items-center mb-10 border-bottom border-secondary pb-4">
-              <h3 className="text-xl font-black flex items-center gap-2"><Target className="text-[#800000]" /> LOADOUT_LOG</h3>
-              <X className="cursor-pointer hover:text-[#800000]" onClick={() => setIsCartOpen(false)} />
-            </div>
-            <div className="overflow-y-auto h-[70vh]">
-              {cart.map((item, i) => (
-                <div key={i} className="flex gap-4 mb-4 bg-[#111] p-3 border-l-2 border-[#800000]">
-                  <div className="flex-1">
-                    <p className="text-xs font-bold">{item.name}</p>
-                    <p className="text-[#800000] font-monospace">${item.price}</p>
-                  </div>
-                  <button onClick={() => removeFromCart(i)} className="text-gray-500 hover:text-white transition-colors">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-            <Button className="w-100 mt-5 rounded-0 fw-bold bg-[#800000] border-0 py-3">CONFIRM SHIPMENT</Button>
-          </div>
-        </div>
-      )}
-
+      
       <Footer />
 
-      {/* Embedded CSS for effects that Bootstrap can't handle alone */}
       <style>{`
-        .tactical-card:hover {
-          border-color: #800000 !important;
-          box-shadow: 0 0 20px rgba(128, 0, 0, 0.2);
-          transform: translateY(-5px);
-          transition: all 0.3s ease;
-        }
-        .hover-red-glow:hover {
-          background-color: #800000 !important;
-          border-color: #800000 !important;
-          box-shadow: 0 0 15px rgba(128, 0, 0, 0.6);
-        }
+        .tactical-card:hover { border-color: #800000 !important; box-shadow: 0 0 20px rgba(128, 0, 0, 0.2); transform: translateY(-5px); transition: all 0.3s ease; }
+        .hover-red-glow:hover { background-color: #800000 !important; border-color: #800000 !important; box-shadow: 0 0 15px rgba(128, 0, 0, 0.6); }
         .font-monospace { font-family: 'Courier New', Courier, monospace !important; }
       `}</style>
     </div>

@@ -4,6 +4,7 @@ import Navbar from "../components/navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProductsBanner from '../assets/IMAGES/PRODUCTS/Products-Banner.jpg';
 import Footer from "../components/footer"
+import AIChat from "../components/AIChat";
 import { Link } from "react-router-dom";
 
 const Products = () => {
@@ -87,8 +88,8 @@ return (
                         to={card.path} 
                         className="mt-6 px-6 py-2 rounded-md text-base font-medium text-center
                                   text-white border border-white/30 backdrop-blur-md
-                                  opacity-0 translate-y-4 group-hover:opacity-100 
-                                  group-hover:translate-y-0 
+                                   opacity-100 translate-y-0 // group-hover:opacity-100 
+                                  // group-hover:translate-y-0 
                                   no-underline
                                   hover:no-underline
                                   hover:border-[#800000]
@@ -109,7 +110,7 @@ return (
         <div>
             <Footer/>   
         </div>
-            
+        <AIChat />
     </div>
 
     )};

@@ -3,12 +3,12 @@ import { Container, Row, Col, Modal } from 'react-bootstrap';
 import { ShoppingCart, Maximize2, ShieldCheck, X, Trash2 } from 'lucide-react';
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
+import { useCart } from "../../context/CartContext";
 
 const OpticsBanner = 'https://i.redd.it/y2487meii7n81.jpg';
 
 const OpticsDepartment = () => {
-  const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { cart, addToCart, setIsCartOpen } = useCart();
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -44,13 +44,7 @@ const OpticsDepartment = () => {
   ];
 
   // --- HANDLERS ---
-  const addToCart = (product) => {
-    setCart((prev) => [...prev, product]);
-  };
 
-  const removeFromCart = (index) => {
-    setCart(cart.filter((_, i) => i !== index));
-  };
 
   const handleExpand = (product) => {
     setSelectedProduct(product);
@@ -101,7 +95,7 @@ const OpticsDepartment = () => {
   );
 
   return (
-    <div className="bg-black min-h-screen text-white font-[Quantico]">
+    <div className="bg-black min-h-screen text-white font-[Quantico] relative overflow-x-hidden">
       <Navbar />
 
       {/* Hero Header */}
@@ -114,16 +108,23 @@ const OpticsDepartment = () => {
         </div>
       </div>
 
-      {/* Floating Cart Launcher */}
-      <button onClick={() => setIsCartOpen(true)} className="fixed top-28 right-8 z-50 bg-[#3a9768] p-4 rounded-full text-white shadow-[0_0_20px_rgba(58,151,104,0.4)] hover:scale-110 transition-all">
-        <ShoppingCart size={24} />
-        {cart.length > 0 && <span className="absolute -top-1 -right-1 bg-white text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#3a9768]">{cart.length}</span>}
-      </button>
-
       {/* Product Sections */}
       <ProductGrid title="PRECISION SCOPES" products={scopes} />
       <ProductGrid title="NIGHT VISION" products={nightVision} />
       <ProductGrid title="LASER SYSTEMS" products={lasers} />
+
+      {/* --- CART TRIGGER BUTTON (BOTTOM RIGHT) --- */}
+      <button 
+        onClick={() => setIsCartOpen(true)} 
+        className="fixed bottom-8 right-8 z-[60] bg-[#3a9768] p-4 rounded-full shadow-[0_0_20px_rgba(58,151,104,0.4)] hover:scale-110 transition-transform active:scale-95"
+      >
+        <ShoppingCart size={24} className="text-white" />
+        {cart.length > 0 && (
+          <span className="absolute -top-1 -right-1 bg-white text-[#3a9768] text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
+            {cart.length}
+          </span>
+        )}
+      </button>
 
       {/* Expand Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered contentClassName="bg-[#0a0a0a] border border-white/10 rounded-none">
@@ -141,7 +142,7 @@ const OpticsDepartment = () => {
             <p className="text-[#3a9768] text-3xl font-black font-sans mb-6">{selectedProduct?.price}</p>
             <button 
                 onClick={() => { addToCart(selectedProduct); setShowModal(false); }}
-                className="w-full bg-[#3a9768] text-white py-4 font-black tracking-widest text-xs hover:bg-[#48b881] transition-all border border-white/10"
+                className="w-full bg-[#3a9768] text-white py-4 font-black tracking-widest text-xs hover:bg-[#48b881] transition-all border border-white/10 uppercase"
             >
               INITIALIZE LOGISTICS ACQUISITION
             </button>
@@ -149,56 +150,6 @@ const OpticsDepartment = () => {
         </Modal.Body>
       </Modal>
 
-      {/* Cart Sidebar */}
-      {isCartOpen && (
-        <div className="fixed inset-0 z-[100] flex justify-end bg-black/70 backdrop-blur-sm transition-all">
-          <div className="absolute inset-0" onClick={() => setIsCartOpen(false)} />
-          <div className="relative w-full max-w-md bg-[#050505] h-full border-l border-[#3a9768]/40 flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.8)]">
-            <div className="p-8 border-b border-white/5 bg-[#0a0a0a] flex justify-between items-center">
-              <div className="absolute top-0 left-0 w-1 h-full bg-[#3a9768]" />
-              <div>
-                <h3 className="text-xl font-black tracking-tighter flex items-center gap-2"><ShieldCheck className="text-[#3a9768]" /> ASSET LOG</h3>
-                <p className="text-[9px] text-gray-500 tracking-[0.2em] mt-1 uppercase">Optics Department</p>
-              </div>
-              <X className="cursor-pointer hover:rotate-90 transition-transform text-gray-400" onClick={() => setIsCartOpen(false)} />
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              {cart.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center opacity-10">
-                  <ShoppingCart size={64} className="mb-4" />
-                  <p className="tracking-widest">NO ASSETS DETECTED</p>
-                </div>
-              ) : (
-                cart.map((item, index) => (
-                  <div key={index} className="flex gap-4 bg-[#0f0f0f] p-4 rounded-sm border border-white/5 border-r-[#3a9768] border-r-4">
-                    <img src={item.img} className="w-16 h-16 object-cover rounded-sm" alt="" />
-                    <div className="flex-1">
-                      <p className="text-[10px] font-bold text-white uppercase">{item.title}</p>
-                      <p className="text-xs font-black text-[#3a9768]">{item.price}</p>
-                    </div>
-                    <button onClick={() => removeFromCart(index)} className="text-gray-600 hover:text-red-500 transition-colors self-center"><Trash2 size={16} /></button>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {cart.length > 0 && (
-              <div className="p-8 bg-[#0a0a0a] border-t border-white/5">
-                <div className="flex justify-between items-end mb-6">
-                  <p className="text-[9px] text-gray-500 uppercase tracking-widest">Total Department Requisition</p>
-                  <p className="text-2xl font-black text-[#3a9768] tracking-tighter">
-                    ${cart.reduce((total, item) => total + parseInt(item.price.replace(/[^0-9]/g, '')), 0).toLocaleString()}
-                  </p>
-                </div>
-                <button className="w-full bg-[#3a9768] text-white py-4 font-black tracking-[0.2em] text-xs hover:bg-[#48b881] transition-all uppercase">
-                  CONFIRM ACQUISITION
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       <Footer />
     </div>

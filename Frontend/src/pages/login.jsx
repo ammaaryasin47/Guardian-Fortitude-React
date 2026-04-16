@@ -28,28 +28,26 @@ const Login = () => {
   };
 
   // 3. Logic to hit the Backend
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       const response = await axios.post("http://localhost:5000/api/users/login", credentials);
       
-      // Success: Provide visual feedback
+      // Success feedback
       alert(response.data.message);
       
-      // Save basic user info for UI personalization
-      localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+      // --- CRITICAL CHANGE HERE ---
+      // We change "userInfo" to "user" to match your ProtectedRoute in App.jsx
+      localStorage.setItem("user", JSON.stringify(response.data.user));
 
       if (response.data.redirectTo) {
         navigate(response.data.redirectTo);
       } else {
-        // Standard Role-based fallback
-        if (response.data.user.role === "admin") {
-          navigate("/admin/adminpanel");
-        } else {
-          navigate("/dashboard");
-        }
+        // Fallback: Send everyone to /profile 
+        // The Profile.jsx component we built handles the Role-based view internally
+        navigate("/profile");
       }
     } catch (err) {
       console.error("Login Error:", err);
@@ -58,7 +56,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="bg-black">
       <Navbar />

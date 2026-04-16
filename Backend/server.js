@@ -2,46 +2,98 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-require('dotenv').config();
-
-// 1. DNS Fix for Atlas connection issues (Essential for some 5G/ISP setups)
 const dns = require('node:dns/promises');
+require('dotenv').config();
+const aiRoutes = require("./routes/ai");
+const askAI = require("./models/aiService");
+
+// --- 1. DNS & NETWORK CONFIG ---
 dns.setServers(['1.1.1.1', '8.8.8.8']);
 
-// 2. Initialize Express
+// --- 2. INITIALIZE APP ---
 const app = express();
 
-// 3. Global Middleware 
-// Note: CORS must come BEFORE routes and MUST have credentials: true for cookies
+// --- 3. GLOBAL MIDDLEWARE ---
 app.use(cors({
-  origin: 'http://localhost:3000', 
-  credentials: true                 
+  origin: 'http://localhost:3000',
+  credentials: true
 }));
 
-// These allow the server to "read" the data coming from your React app
-app.use(express.json());      // For parsing application/json
-app.use(cookieParser());     // For parsing cookies from the browser
+app.use(express.json());
+app.use(cookieParser());
 
-// 4. Database Connection
+// --- 4. DATABASE CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("🚀 MongoDB Atlas Connected via Mongoose"))
-  .catch(err => console.error("❌ Connection Error: ", err));
+  .then(() => console.log("🚀 [SYSTEM]: MongoDB Atlas Connected via Mongoose"))
+  .catch(err => console.error("❌ [ERROR]: Database Connection Failure: ", err));
 
-// 5. Routes
+// --- 5. ROUTE IMPORTS ---
 const userRoutes = require('./routes/userRoutes');
-app.use('/api/users', userRoutes);
+const orderRoutes = require('./routes/orderRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
-// 6. Base Route (Optional: for testing if server is alive)
-app.get('/', (req, res) => {
-  res.send('Guardian Fortitude Services API is running...');
+// --- 6. ROUTE DEFINITIONS ---
+app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/admin', adminRoutes);
+app.use("/", aiRoutes);
+
+// ===============================
+// 🤖 AI PRODUCT ASSISTANT ROUTE
+// ===============================
+app.post("/api/ai-recommend", async (req, res) => {
+  try {
+
+    const { query } = req.body;
+
+    if (!query) {
+      return res.status(400).json({ error: "Query is required" });
+    }
+
+    const aiResponse = await askAI(`
+You are a military equipment ecommerce assistant.
+
+The user is browsing a tactical store with categories:
+- Specialized Vehicles
+- Protective Gear
+- Armoury
+- Optics
+- Guides & Books
+- Accessories
+- Unmanned Vehicles
+
+User question:
+${query}
+
+Answer briefly and recommend categories or products.
+`);
+
+    res.json({ aiResponse });
+
+  } catch (error) {
+    console.error("❌ AI ERROR:", error);
+    res.status(500).json({ error: "AI service failed" });
+  }
 });
 
-// 7. Start Server
+
+
+// --- 7. BASE ROUTE ---
+app.get('/', (req, res) => {
+  res.status(200).send('🛡️ GFSS Tactical API is online and encrypted.');
+});
+
+
+// --- 8. START COMMAND CENTER ---
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`
-  🛡️  GFSS Server Initialized
-  📡  Port: ${PORT}
-  🔗  Origin: http://localhost:3000
-  `);
+==========================================
+🛡️  GFSS SERVER INITIALIZED & DEPLOYED
+📡  COMM_LINK: http://localhost:${PORT}
+🔗  FRONTEND_ORIGIN: http://localhost:3000
+🤖  AI_ASSISTANT: ENABLED
+==========================================
+`);
 });

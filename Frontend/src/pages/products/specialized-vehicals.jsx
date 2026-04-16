@@ -4,13 +4,12 @@ import Footer from "../../components/footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col } from 'react-bootstrap';
 import { ShoppingCart, Maximize2, X, Trash2, ShieldCheck , RefreshCw, Circle, Megaphone, Gauge} from 'lucide-react';
-
+import { useCart } from "../../context/CartContext";
 
 
 const ProductsBanner = 'https://armour-works.com/images/banner.jpg';
 const SpecializedVehicals = () => {
-  const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { cart, addToCart, setIsCartOpen } = useCart();
 
   const features = [
     {
@@ -79,15 +78,7 @@ const SpecializedVehicals = () => {
     } catch (e) { return url; }
   };
 
-  const addToCart = (product) => {
-    setCart((prev) => [...prev, product]);
-  };
-
-  const removeFromCart = (index) => {
-    setCart(cart.filter((_, i) => i !== index));
-  };
-
-  const ProductGrid = ({ title, products }) => (
+ const ProductGrid = ({ title, products }) => (
     <section className="py-20 px-4 border-b border-white/5">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl md:text-5xl font-bold text-center mb-16 tracking-widest uppercase">
@@ -95,27 +86,45 @@ const SpecializedVehicals = () => {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product) => (
-            <div key={product.id} className="group bg-[#0a0a0a] rounded-xl overflow-hidden border border-white/5 hover:border-[#800000]/50 transition-all duration-500 shadow-2xl">
+            <div key={product.id} className="group bg-[#0a0a0a] rounded-sm overflow-hidden border border-white/5 hover:border-[#800000]/50 transition-all duration-500 shadow-2xl flex flex-col">
+              
+              {/* --- IMAGE SECTION --- */}
               <div className="relative h-60 overflow-hidden bg-[#111]">
-                {product.discount && <span className="absolute top-4 left-4 z-20 bg-[#800000] text-white text-[10px] font-bold px-3 py-1 rounded-full">{product.discount}</span>}
-                {product.tag && <span className="absolute top-4 left-4 z-20 bg-white text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase">{product.tag}</span>}
-                <img src={getDirectLink(product.img)} alt={product.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100" />
-                <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <button onClick={() => addToCart(product)} className="p-3 bg-white text-black rounded-full hover:!bg-[#800000] hover:text-white transition-all transform hover:scale-110">
-                    <ShoppingCart size={20} />
-                  </button>
-                  <button className="p-3 bg-white text-black rounded-full hover:!bg-[#800000] hover:text-white transition-all transform hover:scale-110">
-                    <Maximize2 size={20} />
-                  </button>
+                {product.discount && <span className="absolute top-4 left-4 z-20 bg-[#800000] text-white text-[10px] font-black px-3 py-1 rounded-sm">{product.discount}</span>}
+                {product.tag && <span className="absolute top-4 left-4 z-20 bg-white text-black text-[10px] font-black px-3 py-1 rounded-sm uppercase">{product.tag}</span>}
+                
+                <img 
+                  src={getDirectLink(product.img)} 
+                  alt={product.title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100" 
+                />
+                
+                {/* View Fullscreen Overlay (Optional now) */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                   <Maximize2 size={24} className="text-white cursor-pointer hover:text-[#800000]" />
                 </div>
               </div>
-              <div className="p-6 text-center">
-                <h3 className="text-[11px] font-bold text-gray-200 mb-3 tracking-widest uppercase h-10 flex items-center justify-center leading-tight">{product.title}</h3>
-                <div className="flex flex-col items-center">
-                  {product.oldPrice && <span className="text-gray-600 line-through text-[10px] mb-1 font-sans">{product.oldPrice}</span>}
-                  <span className="text-[#800000] text-lg font-black font-sans">{product.price}</span>
+
+              {/* --- INFO SECTION --- */}
+              <div className="p-6 text-center flex-grow flex flex-col">
+                <h3 className="text-[11px] font-black text-gray-200 mb-3 tracking-widest uppercase h-10 flex items-center justify-center leading-tight">
+                  {product.title}
+                </h3>
+                
+                <div className="mb-6">
+                  {product.oldPrice && <span className="text-gray-600 line-through text-[10px] block font-sans">{product.oldPrice}</span>}
+                  <span className="text-white text-xl font-black font-sans tracking-tighter">{product.price}</span>
                 </div>
+
+                {/* --- VISIBLE ADD TO CART BUTTON --- */}
+                <button 
+                  onClick={() => addToCart(product)} 
+                  className="mt-auto w-full py-3 bg-transparent border border-white/20 text-white text-[10px] font-black tracking-[0.3em] uppercase hover:bg-white hover:text-black transition-all duration-300"
+                >
+                  DEPLOY ASSET
+                </button>
               </div>
+
             </div>
           ))}
         </div>
@@ -124,7 +133,7 @@ const SpecializedVehicals = () => {
   );
 
   return (
-    <div className="bg-black min-h-screen text-white font-[Quantico]">
+    <div className="bg-black min-h-screen text-white font-[Barlow]">
       <Navbar />
 
       {/* Header Banner */}
@@ -135,7 +144,7 @@ const SpecializedVehicals = () => {
         </div>
       </div>
 
-      <section className="py-20 bg-black text-white font-[Quantico]">
+      <section className="py-20 bg-black text-white font-[Barlow]">
       <Container>
         {/* Header Section */}
         <Row className="justify-content-center mb-16 text-center">
@@ -185,57 +194,6 @@ const SpecializedVehicals = () => {
       <ProductGrid title="TACTICAL SECTION" products={tacticalProducts} />
       <ProductGrid title="LIGHT ARMORED" products={lightArmoredProducts} />
 
-      {/* Tactical Sidebar */}
-      {isCartOpen && (
-        <div className="fixed inset-0 z-[100] flex justify-end bg-black/70 backdrop-blur-md transition-all">
-          <div className="absolute inset-0" onClick={() => setIsCartOpen(false)} />
-          <div className="relative w-full max-w-md bg-[#050505] h-full border-l border-[#800000]/40 flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.8)]">
-            <div className="p-8 border-b border-white/5 bg-[#0a0a0a] flex justify-between items-center relative">
-              <div className="absolute top-0 left-0 w-1 h-full bg-[#800000]" />
-              <div>
-                <h3 className="text-xl font-black tracking-tighter flex items-center gap-2"><ShieldCheck className="text-[#800000]" /> DEPLOYMENT LIST</h3>
-                <p className="text-[9px] text-gray-500 tracking-[0.2em] mt-1 uppercase">Ready for Authorization</p>
-              </div>
-              <X className="cursor-pointer hover:rotate-90 transition-transform text-gray-400 hover:text-white" onClick={() => setIsCartOpen(false)} />
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              {cart.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center opacity-10 italic">
-                  <ShoppingCart size={64} className="mb-4" />
-                  <p className="tracking-widest">EMPTY ASSET LOG</p>
-                </div>
-              ) : (
-                cart.map((item, index) => (
-                  <div key={index} className="flex gap-4 bg-[#0f0f0f] p-4 rounded-sm border border-white/5 border-r-[#800000] border-r-4 hover:bg-[#141414] transition-all">
-                    <img src={getDirectLink(item.img)} className="w-16 h-16 object-cover rounded-sm border border-white/10" alt="" />
-                    <div className="flex-1">
-                      <p className="text-[9px] text-[#800000] font-bold tracking-widest uppercase mb-1">UNIT_{item.id.split('-').pop()}</p>
-                      <p className="text-[11px] font-bold text-white uppercase leading-tight mb-2">{item.title}</p>
-                      <p className="text-xs font-black text-white/60">{item.price}</p>
-                    </div>
-                    <button onClick={() => removeFromCart(index)} className="text-gray-600 hover:text-red-500 transition-colors self-center"><Trash2 size={16} /></button>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {cart.length > 0 && (
-              <div className="p-8 bg-[#0a0a0a] border-t border-white/5">
-                <div className="flex justify-between items-end mb-6 font-sans">
-                  <p className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Est. Operational Cost</p>
-                  <p className="text-2xl font-black text-[#800000] tracking-tighter">
-                    ${cart.reduce((total, item) => total + parseInt(item.price.replace(/[^0-9]/g, '')), 0).toLocaleString()}
-                  </p>
-                </div>
-                <button className="w-full bg-[#800000] text-white py-4 font-black tracking-[0.2em] text-xs hover:bg-[#a00000] transition-all border border-[#800000] active:scale-[0.98] uppercase">
-                  INITIALIZE QUOTE PROTOCOL
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       <Footer />
     </div>

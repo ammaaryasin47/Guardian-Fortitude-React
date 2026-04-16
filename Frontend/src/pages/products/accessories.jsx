@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { Container, Row, Col } from 'react-bootstrap';
 import { ShoppingCart, ShieldCheck, X, Trash2, ChevronDown, BookOpen } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
+import {useCart} from "../../context/CartContext";
+
+
 
 const AccessoriesDepartment = () => {
-  const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { cart, addToCart, setIsCartOpen } = useCart();
 
   // --- DATA STRUCTURE FOR ALL PRODUCTS ---
 const accessoryData = {
@@ -148,8 +151,6 @@ const accessoryData = {
   }
 };
 
-  const addToCart = (product) => setCart([...cart, product]);
-  const removeFromCart = (index) => setCart(cart.filter((_, i) => i !== index));
   const scrollToSection = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
@@ -293,47 +294,6 @@ const accessoryData = {
         )}
       </button>
 
-      {/* --- CART SIDEBAR --- */}
-      {isCartOpen && (
-        <div className="fixed inset-0 z-[200] flex justify-end bg-black/80 backdrop-blur-sm">
-          <div className="absolute inset-0" onClick={() => setIsCartOpen(false)} />
-          <div className="relative w-full max-w-md bg-[#050505] h-full border-l border-white/10 flex flex-col shadow-2xl">
-            <div className="p-8 border-b border-white/5 flex justify-between items-center">
-              <h3 className="text-xl font-black tracking-tighter flex items-center gap-2"><ShieldCheck className="text-white" size={20}/> DEPLOYMENT LOG</h3>
-              <X className="cursor-pointer text-gray-500 hover:text-white" onClick={() => setIsCartOpen(false)} />
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              {cart.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center opacity-20"><ShoppingCart size={64}/><p className="mt-4 font-black">LOG EMPTY</p></div>
-              ) : (
-                cart.map((item, idx) => (
-                  <div key={idx} className="flex gap-4 bg-[#0f0f0f] p-4 border border-white/5">
-                    <img src={item.img} className="w-12 h-12 object-contain bg-white/5" alt="" />
-                    <div className="flex-1">
-                      <p className="text-[10px] font-black uppercase mb-1">{item.title}</p>
-                      <p className="text-xs font-bold text-gray-400">{item.price}</p>
-                    </div>
-                    <button onClick={() => removeFromCart(idx)} className="text-gray-600 hover:text-red-500 transition-all"><Trash2 size={16}/></button>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {cart.length > 0 && (
-              <div className="p-8 bg-[#0a0a0a] border-t border-white/10">
-                <div className="flex justify-between items-end mb-4">
-                  <p className="text-[10px] text-gray-500 font-black">ESTIMATED REQUISITION COST</p>
-                  <p className="text-2xl font-black">${cart.reduce((t, i) => t + parseFloat(i.price.replace('$','')), 0).toFixed(2)}</p>
-                </div>
-                <button className="w-full bg-white text-black py-4 font-black tracking-widest text-xs hover:bg-gray-200 transition-all uppercase">
-                  CONFIRM ACQUISITION
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       <Footer />
     </div>

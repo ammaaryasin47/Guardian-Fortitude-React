@@ -58,7 +58,7 @@ const Quote = () => {
   };
 
   return (
-    <div className="bg-black min-h-screen font-[Quantico]">
+    <div className="bg-black min-h-screen font-[Barlow]">
       <Navbar />
 
       <div className="pt-20"> 
