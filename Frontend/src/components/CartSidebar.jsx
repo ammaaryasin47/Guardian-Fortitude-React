@@ -73,16 +73,17 @@ const CartSidebar = () => {
               <p className="text-2xl font-black text-white tracking-tighter">${getCartTotal()}</p>
             </div>
             
-            <button 
-              onClick={handleCheckout}
-              className="w-full bg-white text-black py-4 font-black tracking-[0.2em] text-xs hover:bg-[#800000] hover:text-white transition-all uppercase border-0 active:scale-[0.98]"
-            >
-              PROCEED TO REQUISITION
-            </button>
+            <button
+  onClick={() => {
+    setIsCartOpen(false);
+    navigate("/payment");
+  }}
+  className="w-full bg-white text-black py-4 font-black tracking-[0.2em] text-xs hover:bg-[#800000] hover:text-white transition-all uppercase"
+>
+  PROCEED TO REQUISITION
+</button>
             
-            <p className="text-[7px] text-zinc-700 text-center mt-4 font-mono">
-              FINAL AUTHORIZATION REQUIRED ON NEXT STAGE
-            </p>
+           
           </div>
         )}
       </div>

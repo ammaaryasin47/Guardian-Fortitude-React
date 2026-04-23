@@ -57,7 +57,7 @@ const ProtectiveGears = () => {
                 {item.discount && <span className="absolute top-4 left-4 z-20 bg-[#800000] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">{item.discount}</span>}
                 {item.tag && <span className="absolute top-4 left-4 z-20 bg-white text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase">{item.tag}</span>}
                 <img src={item.img} alt={item.title} className="max-h-full max-w-full object-contain transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100" />
-                <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/60 opacity-100 transition-opacity duration-300">
                   <button onClick={() => addToCart(item)} className="p-3 bg-white text-black rounded-full hover:!bg-[#800000] hover:text-white transition-all transform hover:scale-110"><ShoppingCart size={20} /></button>
                   <button className="p-3 bg-white text-black rounded-full hover:!bg-[#800000] hover:text-white transition-all transform hover:scale-110"><Maximize2 size={20} /></button>
                 </div>
@@ -103,10 +103,18 @@ const ProtectiveGears = () => {
       </div>
 
       {/* Floating Cart Launcher */}
-      <button onClick={() => setIsCartOpen(true)} className="fixed top-28 right-8 z-50 bg-[#800000] p-4 rounded-full text-white shadow-[0_0_20px_rgba(128,0,0,0.5)] hover:scale-110 active:scale-95 transition-all">
-        <ShoppingCart size={24} />
-        {cart.length > 0 && <span className="absolute -top-1 -right-1 bg-white text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#800000]">{cart.length}</span>}
-      </button>
+     <button
+  onClick={() => setIsCartOpen(true)}
+  className="fixed bottom-8 right-8 z-50 bg-[#800000] p-4 rounded-full text-white shadow-[0_0_20px_rgba(128,0,0,0.5)] hover:scale-110 active:scale-95 transition-all"
+>
+  <ShoppingCart size={24} />
+
+  {cart.length > 0 && (
+    <span className="absolute -top-1 -right-1 bg-white text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#800000]">
+      {cart.length}
+    </span>
+  )}
+</button>
 
       {/* Sections */}
       <GearSection title="HEAD GEAR" products={headGear} />

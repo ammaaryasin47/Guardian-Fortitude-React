@@ -1,27 +1,22 @@
-# Use Node base image
 FROM node:18
 
-# Set working directory
 WORKDIR /app
 
-# Copy root package files
-COPY package*.json ./
+# Copy everything first
+COPY . .
 
 # Install root dependencies
 RUN npm install
 
-# Copy project files
-COPY . .
-
 # Install backend dependencies
-RUN npm install --prefix backend
+RUN npm install --prefix Backend
 
 # Install frontend dependencies
-RUN npm install --prefix frontend
+RUN npm install --prefix Frontend
 
 # Expose ports
 EXPOSE 3000
 EXPOSE 5000
 
-# Start both backend and frontend
+# Start the project
 CMD ["npm", "run", "dev"]

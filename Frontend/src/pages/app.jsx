@@ -3,7 +3,6 @@ import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLoading } from './LoadingContext';
 
-// --- NEW IMPORTS ---
 import { CartProvider } from '../context/CartContext';
 import CartSidebar from '../components/CartSidebar'; 
 
@@ -27,6 +26,8 @@ import AdminPanel from "./admin/adminpanel.jsx";
 import Profile from "./profile.jsx";
 import Orders from "./orders.jsx";
 import EmployeePanel from "./EmployeePanel.jsx";
+import Payment from "./payment.jsx";
+
 
 // --- PROTECTED ROUTE WRAPPER ---
 const ProtectedRoute = ({ children, allowedRole }) => {
@@ -111,6 +112,12 @@ const App = () => {
           <Route path="/profile" element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/payment" element={
+            <ProtectedRoute>
+              <Payment />
             </ProtectedRoute>
           } />
           

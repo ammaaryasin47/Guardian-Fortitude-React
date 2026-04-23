@@ -13,23 +13,21 @@ const OrderSchema = new mongoose.Schema({
   },
   // This array allows multiple products in one "row" (document)
   products: [
-    {
-      productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product', // References your Product model
-        required: true
-      },
-      quantity: {
-        type: Number,
-        required: true,
-        default: 1
-      },
-      priceAtPurchase: { 
-        type: Number, 
-        required: true 
-      }
+  {
+    productId: {
+      type: String,
+      required: true
+    },
+    quantity: {
+      type: Number,
+      default: 1
+    },
+    priceAtPurchase: {
+      type: Number,
+      required: true
     }
-  ],
+  }
+],
   totalAmount: {
     type: Number,
     required: true

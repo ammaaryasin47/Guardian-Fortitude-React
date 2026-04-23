@@ -4,8 +4,8 @@
   "description": "Root Manager for MERN project",
   "private": true,
   "scripts": {
-    "server": "npm start --prefix backend",
-    "client": "npm start --prefix frontend",
+    "server": "npm start --prefix Backend",
+    "client": "npm start --prefix Frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "install-all": "npm install && npm install --prefix backend && npm install --prefix frontend"
   },
@@ -13,6 +13,7 @@
     "concurrently": "^8.2.2"
   },
   "dependencies": {
-    "axios": "^1.15.0"
+    "axios": "^1.15.0",
+    "socket.io": "^4.8.3"
   }
 }
